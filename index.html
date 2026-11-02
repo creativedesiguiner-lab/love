@@ -1,0 +1,1684 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Nosso Cantinho 💗</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Pacifico&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    font-family: "DM Sans", sans-serif;
+    background: linear-gradient(135deg, #ffd6e8, #f6a5c8, #f78eb8);
+    color: #632b45;
+    overflow-x: hidden;
+}
+
+/* =========================
+   BRILHOS
+========================= */
+
+.sparkles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.sparkle {
+    position: absolute;
+    color: white;
+    text-shadow: 0 0 12px white;
+    animation: subir linear infinite;
+    opacity: 0;
+}
+
+@keyframes subir {
+    0% {
+        transform: translateY(110vh) scale(.4);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: .9;
+    }
+
+    85% {
+        opacity: .8;
+    }
+
+    100% {
+        transform: translateY(-10vh) scale(1.2) rotate(180deg);
+        opacity: 0;
+    }
+}
+
+/* =========================
+   TELAS
+========================= */
+
+.screen {
+    display: none;
+    min-height: 100vh;
+    position: relative;
+    z-index: 2;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* =========================
+   LOGIN
+========================= */
+
+.login-screen {
+    display: none;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-screen.active {
+    display: flex;
+}
+
+.login-box {
+    width: min(420px, 100%);
+    padding: 38px 30px;
+    border-radius: 32px;
+    background: rgba(255,255,255,.78);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 25px 70px rgba(120,30,70,.2);
+    text-align: center;
+}
+
+.login-heart {
+    font-size: 60px;
+    animation: pulsar 1.8s infinite;
+}
+
+@keyframes pulsar {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+.login-box h1 {
+    font-family: "Pacifico", cursive;
+    font-weight: 400;
+    font-size: 38px;
+    color: #a43b68;
+    margin: 10px 0;
+}
+
+.login-box p {
+    color: #8a4c68;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.input {
+    width: 100%;
+    border: 1px solid #efb3cb;
+    background: rgba(255,255,255,.8);
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 12px;
+    outline: none;
+    font-family: inherit;
+    color: #652d48;
+}
+
+.input:focus {
+    border-color: #dc5a8b;
+    box-shadow: 0 0 0 4px rgba(220,90,139,.1);
+}
+
+.login-button {
+    width: 100%;
+    border: none;
+    padding: 15px;
+    border-radius: 16px;
+    background: linear-gradient(135deg,#e85e94,#c83c75);
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(190,50,105,.25);
+}
+
+.login-button:hover {
+    transform: translateY(-2px);
+}
+
+.login-switch {
+    margin-top: 20px;
+    font-size: 12px;
+    color: #9a5b76;
+    cursor: pointer;
+}
+
+.error {
+    color: #c33261;
+    font-size: 13px;
+    margin-top: 10px;
+    display: none;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+
+.container {
+    width: min(720px, calc(100% - 24px));
+    margin: auto;
+    padding: 30px 0 60px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.header-heart {
+    font-size: 48px;
+}
+
+header h1 {
+    font-family: "Pacifico", cursive;
+    font-weight: 400;
+    font-size: clamp(35px,8vw,52px);
+    color: #8f3158;
+}
+
+header p {
+    margin-top: 8px;
+    color: #74354f;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.card {
+    background: rgba(255,255,255,.74);
+    border: 1px solid rgba(255,255,255,.8);
+    backdrop-filter: blur(18px);
+    border-radius: 27px;
+    padding: 23px;
+    margin-bottom: 17px;
+    box-shadow: 0 15px 45px rgba(126,33,72,.12);
+}
+
+.card-title {
+    font-weight: 700;
+    font-size: 17px;
+    margin-bottom: 15px;
+    color: #71304d;
+}
+
+.card-title span {
+    font-size: 23px;
+}
+
+/* =========================
+   ELOGIO
+========================= */
+
+.compliment {
+    text-align: center;
+}
+
+.compliment-text {
+    font-family: "Pacifico", cursive;
+    font-size: 24px;
+    color: #a13d69;
+    line-height: 1.5;
+}
+
+/* =========================
+   FOTO
+========================= */
+
+.photo-upload {
+    min-height: 190px;
+    border: 2px dashed #dc78a2;
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.photo-upload input {
+    display: none;
+}
+
+.upload-icon {
+    font-size: 45px;
+}
+
+.upload-content strong {
+    display: block;
+    margin-top: 7px;
+}
+
+.upload-content small {
+    color: #a05c78;
+}
+
+#photoPreview {
+    display: none;
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+}
+
+/* =========================
+   HUMOR
+========================= */
+
+.mood-display {
+    text-align: center;
+    margin-bottom: 17px;
+}
+
+#moodEmoji {
+    display: block;
+    font-size: 52px;
+}
+
+#moodText {
+    font-weight: 700;
+    color: #8d3559;
+}
+
+input[type=range] {
+    width: 100%;
+    appearance: none;
+    height: 10px;
+    border-radius: 20px;
+    background: linear-gradient(90deg,#ef8db1,#ffc4d9);
+}
+
+input[type=range]::-webkit-slider-thumb {
+    appearance: none;
+    width: 29px;
+    height: 29px;
+    border-radius: 50%;
+    background: white;
+    border: 4px solid #d95186;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(170,40,90,.25);
+}
+
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    margin-top: 8px;
+    color: #a25a76;
+}
+
+/* =========================
+   ESCOLHAS
+========================= */
+
+.choices {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 10px;
+}
+
+.choice {
+    border: 1px solid #efbfd2;
+    background: rgba(255,255,255,.6);
+    border-radius: 17px;
+    padding: 14px 8px;
+    color: #71304d;
+    cursor: pointer;
+    font-family: inherit;
+    transition: .2s;
+}
+
+.choice.active {
+    background: #df5b8e;
+    color: white;
+    border-color: #df5b8e;
+}
+
+/* =========================
+   TEXTAREA
+========================= */
+
+textarea {
+    width: 100%;
+    min-height: 150px;
+    border: 1px solid #efbfd2;
+    border-radius: 20px;
+    padding: 16px;
+    resize: vertical;
+    font-family: inherit;
+    outline: none;
+    background: rgba(255,255,255,.7);
+}
+
+/* =========================
+   BOTÕES
+========================= */
+
+.main-button {
+    width: 100%;
+    border: none;
+    border-radius: 19px;
+    padding: 17px;
+    background: linear-gradient(135deg,#e55b91,#c93d76);
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.logout {
+    background: rgba(255,255,255,.7);
+    color: #9c3c67;
+    margin-top: 10px;
+}
+
+/* =========================
+   ADMIN
+========================= */
+
+.admin-container {
+    width: min(950px,calc(100% - 24px));
+    margin: auto;
+    padding: 30px 0 60px;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.admin-header h1 {
+    font-family: "Pacifico", cursive;
+    font-weight: 400;
+    color: #8f3158;
+    font-size: 35px;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.admin-card {
+    background: rgba(255,255,255,.75);
+    border-radius: 25px;
+    padding: 22px;
+    box-shadow: 0 15px 40px rgba(126,33,72,.12);
+}
+
+.admin-card h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.stat {
+    background: #fff2f7;
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+}
+
+.response {
+    background: #fff4f8;
+    padding: 17px;
+    border-radius: 17px;
+    margin-bottom: 12px;
+}
+
+.response img {
+    width: 100%;
+    max-height: 250px;
+    object-fit: cover;
+    border-radius: 14px;
+    margin-top: 10px;
+}
+
+.response strong {
+    color: #8d3559;
+}
+
+.response p {
+    margin-top: 7px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.delete {
+    border: none;
+    background: #ffd7e5;
+    color: #a52e5d;
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(80,20,45,.35);
+    backdrop-filter: blur(7px);
+    z-index: 20;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-box {
+    width: min(420px,100%);
+    background: white;
+    border-radius: 30px;
+    padding: 35px;
+    text-align: center;
+}
+
+.modal-box h2 {
+    color: #96345f;
+    margin: 10px 0;
+}
+
+.modal-box p {
+    color: #80516a;
+    line-height: 1.6;
+}
+
+.modal-box button {
+    margin-top: 20px;
+    border: none;
+    background: #df5b8e;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 13px;
+    cursor: pointer;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px) {
+
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}
+
+@media(max-width:500px) {
+
+    .container,
+    .admin-container {
+        width: calc(100% - 18px);
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    .choices {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="sparkles" id="sparkles"></div>
+
+<!-- =====================================================
+     LOGIN DELA
+===================================================== -->
+
+<div class="login-screen active" id="loginDela">
+
+    <div class="login-box">
+
+        <div class="login-heart">💗</div>
+
+        <h1>Meu amor</h1>
+
+        <p>
+            Entre no seu cantinho especial ✨
+        </p>
+
+        <input
+            class="input"
+            id="userDela"
+            placeholder="Usuário"
+        >
+
+        <input
+            class="input"
+            id="passDela"
+            type="password"
+            placeholder="Senha"
+        >
+
+        <button class="login-button" onclick="loginDela()">
+            Entrar 💕
+        </button>
+
+        <div class="error" id="errorDela">
+            Usuário ou senha incorretos.
+        </div>
+
+        <div class="login-switch" onclick="mostrarLoginAdmin()">
+            Sou o administrador 🔐
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     LOGIN ADMIN
+===================================================== -->
+
+<div class="login-screen" id="loginAdmin">
+
+    <div class="login-box">
+
+        <div class="login-heart">🔐</div>
+
+        <h1>Área privada</h1>
+
+        <p>
+            Acesso do administrador
+        </p>
+
+        <input
+            class="input"
+            id="userAdmin"
+            placeholder="Usuário"
+        >
+
+        <input
+            class="input"
+            id="passAdmin"
+            type="password"
+            placeholder="Senha"
+        >
+
+        <button class="login-button" onclick="loginAdmin()">
+            Entrar
+        </button>
+
+        <div class="error" id="errorAdmin">
+            Usuário ou senha incorretos.
+        </div>
+
+        <div class="login-switch" onclick="mostrarLoginDela()">
+            Voltar para o cantinho 💗
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     PÁGINA DELA
+===================================================== -->
+
+<div class="screen" id="paginaDela">
+
+<div class="container">
+
+<header>
+
+    <div class="header-heart">💗</div>
+
+    <h1>Oi, meu amor</h1>
+
+    <p>
+        Como está o coração da minha menina hoje?
+        ✨
+    </p>
+
+</header>
+
+
+<!-- ELOGIO -->
+
+<section class="card">
+
+    <div class="card-title">
+        🌷 Seu elogio de hoje
+    </div>
+
+    <div class="compliment">
+
+        <div
+            class="compliment-text"
+            id="elogioDoDia"
+        >
+            "Você tem um jeito único de deixar meus dias mais bonitos."
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FOTO -->
+
+<section class="card">
+
+    <div class="card-title">
+        📸 Seu momento de hoje
+    </div>
+
+    <label class="photo-upload">
+
+        <input
+            type="file"
+            id="photoInput"
+            accept="image/*"
+        >
+
+        <div
+            class="upload-content"
+            id="uploadContent"
+        >
+
+            <div class="upload-icon">📷</div>
+
+            <strong>
+                Escolha uma foto
+            </strong>
+
+            <small>
+                Quero ver um pedacinho do seu dia 💗
+            </small>
+
+        </div>
+
+        <img
+            id="photoPreview"
+            alt="Foto enviada"
+        >
+
+    </label>
+
+</section>
+
+
+<!-- HUMOR -->
+
+<section class="card">
+
+    <div class="card-title">
+        🌸 Como você está hoje?
+    </div>
+
+    <div class="mood-display">
+
+        <span id="moodEmoji">😊</span>
+
+        <span id="moodText">
+            Estou bem
+        </span>
+
+    </div>
+
+    <input
+        type="range"
+        id="moodRange"
+        min="0"
+        max="100"
+        value="70"
+    >
+
+    <div class="range-labels">
+
+        <span>🥺 Péssima</span>
+        <span>😐 Mais ou menos</span>
+        <span>🥰 Muito bem</span>
+
+    </div>
+
+</section>
+
+
+<!-- DESEJOS -->
+
+<section class="card">
+
+    <div class="card-title">
+        🎀 O que você está com vontade?
+    </div>
+
+    <div class="choices">
+
+        <button class="choice" data-value="Quero carinho 🥰">
+            🥰 Quero carinho
+        </button>
+
+        <button class="choice" data-value="Quero assistir algo 🍿">
+            🍿 Assistir algo
+        </button>
+
+        <button class="choice" data-value="Quero comer 🍔">
+            🍔 Quero comer
+        </button>
+
+        <button class="choice" data-value="Quero conversar 💬">
+            💬 Quero conversar
+        </button>
+
+        <button class="choice" data-value="Quero atenção 🥺">
+            🥺 Quero atenção
+        </button>
+
+        <button class="choice" data-value="Quero um encontro 🌹">
+            🌹 Quero um encontro
+        </button>
+
+        <button class="choice" data-value="Quero ficar quietinha 😴">
+            😴 Ficar quietinha
+        </button>
+
+        <button class="choice" data-value="Quero uma surpresa 🎁">
+            🎁 Quero surpresa
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- MENSAGEM -->
+
+<section class="card">
+
+    <div class="card-title">
+        💌 Quero te contar uma coisa...
+    </div>
+
+    <textarea
+        id="message"
+        placeholder="Escreva aqui o que você quiser me contar... 💗"
+    ></textarea>
+
+</section>
+
+
+<!-- ENVIAR -->
+
+<section class="card">
+
+    <button
+        class="main-button"
+        onclick="enviarResposta()"
+    >
+        💗 Enviar para você
+    </button>
+
+    <button
+        class="main-button logout"
+        onclick="logout()"
+    >
+        Sair
+    </button>
+
+</section>
+
+<footer>
+    Feito com carinho, especialmente para você ✨
+</footer>
+
+</div>
+</div>
+
+
+<!-- =====================================================
+     PAINEL ADMIN
+===================================================== -->
+
+<div class="screen" id="paginaAdmin">
+
+<div class="admin-container">
+
+<div class="admin-header">
+
+    <div>
+
+        <h1>Meu painel 💗</h1>
+
+        <p>
+            Tudo que ela deixou para você.
+        </p>
+
+    </div>
+
+    <button
+        class="main-button"
+        style="width:auto;padding:12px 20px"
+        onclick="logout()"
+    >
+        Sair
+    </button>
+
+</div>
+
+
+<div class="admin-grid">
+
+
+<!-- RESUMO -->
+
+<div class="admin-card">
+
+    <h2>📊 Resumo</h2>
+
+    <div class="stat">
+        💌 Respostas:
+        <strong id="totalRespostas">0</strong>
+    </div>
+
+    <div class="stat">
+        🌷 Elogios cadastrados:
+        <strong id="totalElogios">0</strong>
+    </div>
+
+</div>
+
+
+<!-- ALTERAR SENHA -->
+
+<div class="admin-card">
+
+    <h2>🔐 Acesso dela</h2>
+
+    <input
+        class="input"
+        id="novaSenha"
+        placeholder="Nova senha dela"
+    >
+
+    <button
+        class="login-button"
+        onclick="alterarSenha()"
+    >
+        Salvar senha
+    </button>
+
+</div>
+
+
+<!-- ELOGIOS -->
+
+<div class="admin-card">
+
+    <h2>🌷 Novo elogio</h2>
+
+    <input
+        class="input"
+        id="novoElogio"
+        placeholder="Digite um elogio..."
+    >
+
+    <button
+        class="login-button"
+        onclick="adicionarElogio()"
+    >
+        Adicionar elogio
+    </button>
+
+    <div
+        id="listaElogios"
+        style="margin-top:15px"
+    ></div>
+
+</div>
+
+
+<!-- RESPOSTAS -->
+
+<div class="admin-card">
+
+    <h2>💌 Respostas dela</h2>
+
+    <div id="respostas">
+        Nenhuma resposta ainda.
+    </div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+<!-- MODAL -->
+
+<div class="modal" id="modal">
+
+<div class="modal-box">
+
+    <div style="font-size:55px">
+        💕
+    </div>
+
+    <h2>Recebi seu carinho!</h2>
+
+    <p>
+        Tudo foi enviado para mim.
+        <br><br>
+        Obrigado por dividir um pedacinho
+        do seu dia comigo.
+    </p>
+
+    <button onclick="fecharModal()">
+        Voltar 💗
+    </button>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   CONFIGURAÇÃO INICIAL
+===================================================== */
+
+let senhaDela =
+    localStorage.getItem("senhaDela") || "amor123";
+
+const usuarioDela = "amor";
+
+const usuarioAdmin = "gui";
+
+const senhaAdmin = "gui123";
+
+
+/* =====================================================
+   BRILHOS
+===================================================== */
+
+const sparkleContainer =
+    document.getElementById("sparkles");
+
+const simbolos = [
+    "✦",
+    "✧",
+    "♡",
+    "⋆",
+    "✨"
+];
+
+for(let i = 0; i < 40; i++){
+
+    const s =
+        document.createElement("div");
+
+    s.className = "sparkle";
+
+    s.innerText =
+        simbolos[
+            Math.floor(
+                Math.random() * simbolos.length
+            )
+        ];
+
+    s.style.left =
+        Math.random() * 100 + "%";
+
+    s.style.fontSize =
+        (8 + Math.random()*15) + "px";
+
+    s.style.animationDuration =
+        (5 + Math.random()*8) + "s";
+
+    s.style.animationDelay =
+        Math.random()*8 + "s";
+
+    sparkleContainer.appendChild(s);
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+function mostrarLoginAdmin(){
+
+    document
+        .getElementById("loginDela")
+        .classList.remove("active");
+
+    document
+        .getElementById("loginAdmin")
+        .classList.add("active");
+
+}
+
+
+function mostrarLoginDela(){
+
+    document
+        .getElementById("loginAdmin")
+        .classList.remove("active");
+
+    document
+        .getElementById("loginDela")
+        .classList.add("active");
+
+}
+
+
+function loginDela(){
+
+    const user =
+        document.getElementById("userDela").value;
+
+    const pass =
+        document.getElementById("passDela").value;
+
+    if(
+        user === usuarioDela &&
+        pass === senhaDela
+    ){
+
+        document
+            .getElementById("loginDela")
+            .classList.remove("active");
+
+        document
+            .getElementById("paginaDela")
+            .classList.add("active");
+
+        carregarElogio();
+
+    }else{
+
+        document
+            .getElementById("errorDela")
+            .style.display = "block";
+
+    }
+
+}
+
+
+function loginAdmin(){
+
+    const user =
+        document.getElementById("userAdmin").value;
+
+    const pass =
+        document.getElementById("passAdmin").value;
+
+    if(
+        user === usuarioAdmin &&
+        pass === senhaAdmin
+    ){
+
+        document
+            .getElementById("loginAdmin")
+            .classList.remove("active");
+
+        document
+            .getElementById("paginaAdmin")
+            .classList.add("active");
+
+        carregarAdmin();
+
+    }else{
+
+        document
+            .getElementById("errorAdmin")
+            .style.display = "block";
+
+    }
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout(){
+
+    document
+        .getElementById("paginaDela")
+        .classList.remove("active");
+
+    document
+        .getElementById("paginaAdmin")
+        .classList.remove("active");
+
+    document
+        .getElementById("loginDela")
+        .classList.add("active");
+
+}
+
+
+/* =====================================================
+   HUMOR
+===================================================== */
+
+const moodRange =
+    document.getElementById("moodRange");
+
+moodRange.addEventListener(
+    "input",
+    atualizarHumor
+);
+
+
+function atualizarHumor(){
+
+    const value =
+        Number(moodRange.value);
+
+    const emoji =
+        document.getElementById("moodEmoji");
+
+    const texto =
+        document.getElementById("moodText");
+
+    if(value <= 20){
+
+        emoji.innerText = "🥺";
+        texto.innerText =
+            "Hoje não estou muito bem";
+
+    }else if(value <= 40){
+
+        emoji.innerText = "😔";
+        texto.innerText =
+            "Estou meio pra baixo";
+
+    }else if(value <= 60){
+
+        emoji.innerText = "😐";
+        texto.innerText =
+            "Estou mais ou menos";
+
+    }else if(value <= 80){
+
+        emoji.innerText = "😊";
+        texto.innerText =
+            "Estou bem";
+
+    }else{
+
+        emoji.innerText = "🥰";
+        texto.innerText =
+            "Estou muito feliz!";
+
+    }
+
+}
+
+
+/* =====================================================
+   FOTO
+===================================================== */
+
+let fotoAtual = "";
+
+document
+    .getElementById("photoInput")
+    .addEventListener("change", function(){
+
+        const file = this.files[0];
+
+        if(!file) return;
+
+        const reader =
+            new FileReader();
+
+        reader.onload = function(e){
+
+            fotoAtual =
+                e.target.result;
+
+            document
+                .getElementById("photoPreview")
+                .src = fotoAtual;
+
+            document
+                .getElementById("photoPreview")
+                .style.display = "block";
+
+            document
+                .getElementById("uploadContent")
+                .style.display = "none";
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
+
+
+/* =====================================================
+   ESCOLHAS
+===================================================== */
+
+document
+    .querySelectorAll(".choice")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            function(){
+
+                document
+                    .querySelectorAll(".choice")
+                    .forEach(b =>
+                        b.classList.remove("active")
+                    );
+
+                this.classList.add("active");
+
+            }
+        );
+
+    });
+
+
+/* =====================================================
+   ENVIAR RESPOSTA
+===================================================== */
+
+function enviarResposta(){
+
+    const escolha =
+        document.querySelector(".choice.active");
+
+    const resposta = {
+
+        data:
+            new Date().toLocaleString("pt-BR"),
+
+        humor:
+            document.getElementById("moodText").innerText,
+
+        humorValor:
+            moodRange.value,
+
+        desejo:
+            escolha
+                ? escolha.dataset.value
+                : "Nenhuma opção selecionada",
+
+        mensagem:
+            document.getElementById("message").value,
+
+        foto:
+            fotoAtual
+
+    };
+
+
+    let respostas =
+        JSON.parse(
+            localStorage.getItem("respostas") || "[]"
+        );
+
+    respostas.unshift(resposta);
+
+    localStorage.setItem(
+        "respostas",
+        JSON.stringify(respostas)
+    );
+
+
+    document
+        .getElementById("modal")
+        .classList.add("show");
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function fecharModal(){
+
+    document
+        .getElementById("modal")
+        .classList.remove("show");
+
+}
+
+
+/* =====================================================
+   ELOGIOS
+===================================================== */
+
+function carregarElogio(){
+
+    let elogios =
+        JSON.parse(
+            localStorage.getItem("elogios") || "[]"
+        );
+
+    if(elogios.length === 0){
+
+        document
+            .getElementById("elogioDoDia")
+            .innerText =
+            '"Você tem um jeito único de deixar meus dias mais bonitos."';
+
+        return;
+
+    }
+
+    const hoje =
+        new Date().getDate();
+
+    const index =
+        hoje % elogios.length;
+
+    document
+        .getElementById("elogioDoDia")
+        .innerText =
+        '"' + elogios[index] + '"';
+
+}
+
+
+function adicionarElogio(){
+
+    const campo =
+        document.getElementById("novoElogio");
+
+    const texto =
+        campo.value.trim();
+
+    if(!texto) return;
+
+    let elogios =
+        JSON.parse(
+            localStorage.getItem("elogios") || "[]"
+        );
+
+    elogios.push(texto);
+
+    localStorage.setItem(
+        "elogios",
+        JSON.stringify(elogios)
+    );
+
+    campo.value = "";
+
+    carregarAdmin();
+
+}
+
+
+/* =====================================================
+   ALTERAR SENHA DELA
+===================================================== */
+
+function alterarSenha(){
+
+    const nova =
+        document
+            .getElementById("novaSenha")
+            .value
+            .trim();
+
+    if(!nova){
+
+        alert("Digite uma senha.");
+
+        return;
+
+    }
+
+    localStorage.setItem(
+        "senhaDela",
+        nova
+    );
+
+    senhaDela = nova;
+
+    alert("Senha dela alterada com sucesso! 💗");
+
+    document
+        .getElementById("novaSenha")
+        .value = "";
+
+}
+
+
+/* =====================================================
+   ADMIN
+===================================================== */
+
+function carregarAdmin(){
+
+    const respostas =
+        JSON.parse(
+            localStorage.getItem("respostas") || "[]"
+        );
+
+    const elogios =
+        JSON.parse(
+            localStorage.getItem("elogios") || "[]"
+        );
+
+
+    document
+        .getElementById("totalRespostas")
+        .innerText =
+        respostas.length;
+
+
+    document
+        .getElementById("totalElogios")
+        .innerText =
+        elogios.length;
+
+
+    /* ELOGIOS */
+
+    const lista =
+        document.getElementById("listaElogios");
+
+    lista.innerHTML = "";
+
+    elogios.forEach(
+        (elogio,index) => {
+
+            const div =
+                document.createElement("div");
+
+            div.className = "stat";
+
+            div.innerHTML = `
+                🌷 ${elogio}
+                <br>
+                <button
+                    class="delete"
+                    onclick="excluirElogio(${index})"
+                >
+                    Excluir
+                </button>
+            `;
+
+            lista.appendChild(div);
+
+        }
+    );
+
+
+    /* RESPOSTAS */
+
+    const container =
+        document.getElementById("respostas");
+
+    container.innerHTML = "";
+
+    if(respostas.length === 0){
+
+        container.innerHTML =
+            "Nenhuma resposta ainda. 💗";
+
+        return;
+
+    }
+
+
+    respostas.forEach(
+        (r,index) => {
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "response";
+
+            div.innerHTML = `
+
+                <strong>📅 ${r.data}</strong>
+
+                <p>
+                    😊 <strong>Humor:</strong>
+                    ${r.humor}
+                </p>
+
+                <p>
+                    🎀 <strong>Vontade:</strong>
+                    ${r.desejo}
+                </p>
+
+                <p>
+                    💌 <strong>Mensagem:</strong>
+                    ${r.mensagem || "Ela não escreveu nada."}
+                </p>
+
+                ${
+                    r.foto
+                    ?
+                    `<img src="${r.foto}">`
+                    :
+                    ""
+                }
+
+                <button
+                    class="delete"
+                    onclick="excluirResposta(${index})"
+                >
+                    Excluir resposta
+                </button>
+
+            `;
+
+            container.appendChild(div);
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   EXCLUIR
+===================================================== */
+
+function excluirResposta(index){
+
+    let respostas =
+        JSON.parse(
+            localStorage.getItem("respostas") || "[]"
+        );
+
+    respostas.splice(index,1);
+
+    localStorage.setItem(
+        "respostas",
+        JSON.stringify(respostas)
+    );
+
+    carregarAdmin();
+
+}
+
+
+function excluirElogio(index){
+
+    let elogios =
+        JSON.parse(
+            localStorage.getItem("elogios") || "[]"
+        );
+
+    elogios.splice(index,1);
+
+    localStorage.setItem(
+        "elogios",
+        JSON.stringify(elogios)
+    );
+
+    carregarAdmin();
+
+}
+
+</script>
+
+</body>
+</html>
+```
