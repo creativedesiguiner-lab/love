@@ -50,7 +50,7 @@ async function loadCompliment(){let target=document.getElementById('daily-compli
 async function addCompliment(){let el=document.getElementById('new-compliment'),v=el.value.trim();if(!v)return;let {error}=await db.from('compliments').insert({message:v});if(error){alert('Não foi possível cadastrar o elogio: '+error.message);return}el.value='';await renderAdmin();await loadCompliment()}
 async function removeCompliment(id){let {error}=await db.from('compliments').delete().eq('id',id);if(error){alert('Não foi possível excluir: '+error.message);return}await renderAdmin();await loadCompliment()}
 function saveCredentials(){let u=document.getElementById('edit-her-user').value.trim(),p=document.getElementById('edit-her-pass').value.trim();if(!u&&!p){document.getElementById('credential-status').textContent='Informe um novo usuário ou senha.';return}if(u)localStorage.setItem('herUser',u);if(p)localStorage.setItem('herPass',p);document.getElementById('credential-status').textContent='Acesso atualizado. Você continua no painel.';document.getElementById('edit-her-pass').value=''}
-async function deleteResponse(id){let {error}=await db.from('responses').delete().eq('id',id);if(error){alert('Não foi possível excluir a resposta: '+error.message);return}await renderAdmin()}
+async function deleteResponse(id){if(!confirm('Tem certeza que deseja excluir esta resposta? Essa ação não pode ser desfeita.'))return;let {data:row,error:readError}=await db.from('responses').select('photo_url').eq('id',id).maybeSingle();if(readError){alert('Não foi possível localizar a resposta: '+readError.message);return}let {error}=await db.from('responses').delete().eq('id',id);if(error){alert('Não foi possível excluir a resposta: '+error.message+'\\nVerifique a política de exclusão no Supabase.');return}if(row?.photo_url){let {error:photoError}=await db.storage.from('fotos').remove([row.photo_url]);if(photoError)console.error('A resposta foi excluída, mas a foto não pôde ser removida:',photoError)}await renderAdmin()}
 let responseChannel=null;let responseRefreshTimer=null;function watchResponses(){if(!responseChannel){responseChannel=db.channel('painel-respostas').on('postgres_changes',{event:'*',schema:'public',table:'responses'},()=>renderAdmin()).subscribe()}if(!responseRefreshTimer){responseRefreshTimer=setInterval(()=>{if(sessionStorage.getItem('siteRole')==='admin')renderAdmin()},15000)}}
 async function renderAdmin(){let [{data:a,error:re},{data:c,error:ce}]=await Promise.all([db.from('responses').select('*').order('created_at',{ascending:false}),db.from('compliments').select('*').order('created_at',{ascending:true})]);if(re||ce){console.error(re||ce);document.getElementById('responses').innerHTML='<p class="muted">Não foi possível carregar os dados. '+escapeHTML((re||ce).message||'Verifique as permissões do Supabase.')+'</p><button class="small-btn" onclick="renderAdmin()">Tentar novamente</button>';return}a=a||[];c=c||[];document.getElementById('total-responses').textContent=a.length;document.getElementById('total-compliments').textContent=c.length;document.getElementById('edit-her-user').value=localStorage.getItem('herUser')||defaults.herUser;document.getElementById('compliment-list').innerHTML=c.map(x=>`<div class="stat">🌷 ${escapeHTML(x.message)} <button class="small-btn" onclick="removeCompliment(${x.id})">Excluir</button></div>`).join('')||'<p class="muted">Nenhum elogio cadastrado.</p>';let cards=await Promise.all(a.map(async r=>{let photo='';if(r.photo_url){let signed=await db.storage.from('fotos').createSignedUrl(r.photo_url,3600);if(!signed.error)photo=signed.data.signedUrl;else console.error('Falha ao abrir foto:',signed.error)}return `<article class="response"><b>📅 ${escapeHTML(new Date(r.created_at).toLocaleString('pt-BR'))}</b><p>😊 <b>Humor:</b> ${escapeHTML(r.mood||'')} (${r.mood_value??0}/100)</p><p>🎀 <b>Vontade:</b> ${escapeHTML(r.wish||'')}</p><p>💌 <b>Mensagem:</b> ${escapeHTML(r.message||'Ela não escreveu uma mensagem.')}</p>${photo?`<img src="${photo}" alt="Foto enviada">`:'<p class="muted">Nenhuma foto enviada.</p>'}<button class="small-btn" onclick="deleteResponse(${r.id})">Excluir resposta</button></article>`}));document.getElementById('responses').innerHTML='<button class="small-btn" onclick="renderAdmin()">Atualizar respostas</button>'+ (cards.join('')||'<p class="muted">Nenhuma resposta por enquanto. 💗</p>')}
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -77,4 +77,53 @@ const originalSendResponse=sendResponse;
 sendResponse=async function(){const typed=customWish.value.trim();const picks=selectedWishes.join(' • ');selectedWish=[picks,typed?'💌 Pedido dela: '+typed:''].filter(Boolean).join(' | ');await originalSendResponse()};
 const originalCloseSuccess=closeSuccess;
 closeSuccess=function(){originalCloseSuccess();selectedWishes=[];customWish.value='';paintMood()};
+</script><script>
+// Campos obrigatórios e ações de foto no painel do Gui.
+const messageField=document.getElementById('message');
+messageField.required=true;
+messageField.addEventListener('invalid',()=>{messageField.setCustomValidity('Escreva uma mensagem para mim antes de enviar. 💗')});
+messageField.addEventListener('input',()=>messageField.setCustomValidity(''));
+const wishTitle=document.querySelector('#choices').parentElement.querySelector('.section-title');
+const multiHint=document.querySelector('#choices').parentElement.querySelector('p.muted');
+if(multiHint)multiHint.textContent='Você pode clicar em mais de uma opção! Se não escolher nenhuma, escreva sua vontade no campo abaixo. 💗';
+const previousSend=sendResponse;
+sendResponse=async function(){
+ const message=messageField.value.trim();
+ const typed=customWish.value.trim();
+ if(!message){alert('O campo “Mensagem para mim” é obrigatório. 💗');messageField.focus();return}
+ if(!selectedWishes.length&&!typed){alert('Escolha pelo menos uma vontade ou escreva o que está com vontade. 💗');customWish.focus();return}
+ messageField.value=message;
+ await previousSend();
+};
+async function downloadResponsePhoto(id){
+ const {data:row,error}=await db.from('responses').select('photo_url').eq('id',id).maybeSingle();
+ if(error||!row?.photo_url){alert('Não foi possível localizar esta foto.');return}
+ const {data,error:signError}=await db.storage.from('fotos').createSignedUrl(row.photo_url,60,{download:true});
+ if(signError){alert('Não foi possível preparar o download: '+signError.message);return}
+ const link=document.createElement('a');link.href=data.signedUrl;link.download='foto-meu-cantinho';document.body.appendChild(link);link.click();link.remove();
+}
+async function deleteResponsePhoto(id){
+ if(!confirm('Excluir somente esta foto do armazenamento? A resposta dela será mantida.'))return;
+ const {data:row,error:readError}=await db.from('responses').select('photo_url').eq('id',id).maybeSingle();
+ if(readError||!row?.photo_url){alert('Não foi possível localizar esta foto.');return}
+ const {error:removeError}=await db.storage.from('fotos').remove([row.photo_url]);
+ if(removeError){alert('Não foi possível excluir a foto: '+removeError.message);return}
+ const {error:updateError}=await db.from('responses').update({photo_url:null}).eq('id',id);
+ if(updateError){alert('A foto foi removida do armazenamento, mas não foi possível atualizar o registro: '+updateError.message);return}
+ await renderAdmin();
+}
+const renderAdminBeforePhotoActions=renderAdmin;
+renderAdmin=async function(){
+ await renderAdminBeforePhotoActions();
+ document.querySelectorAll('#responses article.response').forEach(card=>{
+  if(card.querySelector('[data-photo-actions]'))return;
+  const deleteButton=card.querySelector('button[onclick^="deleteResponse("]');
+  const match=deleteButton?.getAttribute('onclick')?.match(/deleteResponse\((\d+)\)/);
+  if(!match||!card.querySelector('img'))return;
+  const id=Number(match[1]);const actions=document.createElement('div');actions.dataset.photoActions='1';
+  actions.innerHTML='<button class="small-btn" type="button">⬇️ Baixar foto</button> <button class="small-btn" type="button">🗑️ Excluir somente a foto</button>';
+  const buttons=actions.querySelectorAll('button');buttons[0].addEventListener('click',()=>downloadResponsePhoto(id));buttons[1].addEventListener('click',()=>deleteResponsePhoto(id));
+  deleteButton.before(actions);
+ });
+};
 </script></body></html>
